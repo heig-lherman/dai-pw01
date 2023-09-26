@@ -1,0 +1,6 @@
+// This file is a subset of the UTF-8 Sampler by Markus Kuhn where
+// only the ASCII portion has been kept.
+// Source: https://www.w3.org/2001/06/utf-8-test/UTF-8-demo.html
+
+The ASCII compatible UTF-8 encoding of ISO 10646 and Unicode
+plain-text files is defined in RFC 2279 and in ISO 10646-1 Annex R.
