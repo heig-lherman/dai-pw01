@@ -1,13 +1,10 @@
 package ch.lutonite.heig.dai.pw01.command;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.concurrent.Callable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
 
@@ -21,15 +18,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
  *
  * @author Loïc Herman
  */
-abstract class AbstractTextOperationCommand implements Callable<Integer> {
-
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
-    @Option(
-            names = {"-i", "--input-file"},
-            description = "input file path"
-    )
-    private Path inputFilePath;
+abstract class AbstractTextOperationCommand extends AbstractOperationCommand<Reader, Writer> {
 
     @Option(
             names = {"--input-encoding"},
@@ -38,12 +27,6 @@ abstract class AbstractTextOperationCommand implements Callable<Integer> {
             showDefaultValue = Visibility.ALWAYS
     )
     private Charset inputEncoding;
-
-    @Option(
-            names = {"-o", "--output-file"},
-            description = "output file path"
-    )
-    private Path outputFilePath;
 
     @Option(
             names = {"--output-encoding"},
@@ -62,42 +45,43 @@ abstract class AbstractTextOperationCommand implements Callable<Integer> {
     protected abstract Writer processOutput(Writer outputWriter);
 
     /**
-     * Main entry point for any of the subcommands implementing this class.
+     * Opens the input reader for the operation.
      *
-     * @return the program exit code. 0 if the operation was successful, 1 otherwise.
+     * @return the input reader
+     * @throws IOException if an I/O error occurs
      */
     @Override
-    public final Integer call() {
-        log.info("Starting operation on file {} to {}", inputFilePath, outputFilePath);
-        var start = System.currentTimeMillis();
-        try (
-                var reader = Files.newBufferedReader(
-                        inputFilePath,
-                        inputEncoding
-                );
-                var writer = Files.newBufferedWriter(
-                        outputFilePath,
-                        outputEncoding,
-                        CREATE, WRITE, TRUNCATE_EXISTING
-                );
-        ) {
-            reader.transferTo(processOutput(writer));
-            var end = System.currentTimeMillis();
-            log.info("Operation completed in {} ms", end - start);
-            return 0;
-        } catch (IOException ioException) {
-            log.error(
-                    "Could not complete the operation due to an I/O exception: {} - {}",
-                    ioException.getClass().getSimpleName(),
-                    ioException.getMessage()
-            );
+    protected Reader openInput() throws IOException {
+        return Files.newBufferedReader(inputFilePath, inputEncoding);
+    }
 
-            // we should resolve the stacktrace only if the debug level is enabled
-            if (log.isDebugEnabled()) {
-                log.debug("Stacktrace:", ioException);
-            }
+    /**
+     * Opens the output writer for the operation, applying the filter.
+     *
+     * @return the output writer
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected Writer openOutput() throws IOException {
+        return processOutput(Files.newBufferedWriter(
+                outputFilePath,
+                outputEncoding,
+                CREATE, TRUNCATE_EXISTING, WRITE
+        ));
+    }
 
-            return 1;
-        }
+    /**
+     * Copies the input stream to the output stream.
+     *
+     * @param inputStream  the input stream
+     * @param outputStream the output stream
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void process(
+            Reader inputStream,
+            Writer outputStream
+    ) throws IOException {
+        inputStream.transferTo(outputStream);
     }
 }

@@ -1,7 +1,9 @@
 package ch.lutonite.heig.dai.pw01;
 
+import ch.lutonite.heig.dai.pw01.command.Base64Command;
 import ch.lutonite.heig.dai.pw01.command.CopyCommand;
 import ch.lutonite.heig.dai.pw01.command.LowercaseCommand;
+import ch.lutonite.heig.dai.pw01.command.Sha3Command;
 import ch.lutonite.heig.dai.pw01.command.UppercaseCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -14,6 +16,8 @@ import picocli.CommandLine.HelpCommand;
  * @see CopyCommand
  * @see LowercaseCommand
  * @see UppercaseCommand
+ * @see Base64Command
+ * @see Sha3Command
  */
 @Command(
         name = "IoProcessing",
@@ -25,6 +29,8 @@ import picocli.CommandLine.HelpCommand;
                 CopyCommand.class,
                 LowercaseCommand.class,
                 UppercaseCommand.class,
+                Base64Command.class,
+                Sha3Command.class,
         }
 )
 public class IoProcessingCli implements Runnable {

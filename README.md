@@ -2,6 +2,13 @@
 
 This is a CLI that allows you to apply some operations on text and binary files.
 
+## Dependencies
+
+### commons-codec
+
+To simplify the processing of encoding files as base64, we are using the `commons-codec` utility
+library from Apache which provides a simple API to encode and decode data in various formats.
+
 ## Build the JAR
 
 To build the JAR, run the following command from the root of the repository:
