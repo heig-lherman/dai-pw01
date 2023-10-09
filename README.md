@@ -40,6 +40,8 @@ The CLI supports the following commands:
 - `copy`: Copies a binary file to another.
 - `lowercase`: Transforms a text file, making it all lowercase.
 - `uppercase`: Transforms a text file, making it all uppercase.
+- `base64`: Encodes and decodes any file to and from the base64 format.
+- `sha3`: Computes the SHA3 hash of a file and prints it in the output file.
 
 ### Testing
 
